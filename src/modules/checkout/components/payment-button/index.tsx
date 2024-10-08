@@ -276,16 +276,25 @@ const WebXPayButton = ({
   const handlePayment = async () => {
     setSubmitting(true)
 
-    postRedirect("https://stagingxpay.info/index.php?route=checkout/billing", {
+    const data = {
       first_name: cart.billing_address.first_name,
       last_name: cart.billing_address.last_name,
       email: cart.email,
       contact_number: cart.billing_address.phone,
       address_line_one: cart.billing_address.address_1,
+      address_line_two: cart.billing_address.address_2 ?? undefined,
+      city: cart.billing_address.city ?? undefined,
+      postal_code: cart.billing_address.postal_code ?? undefined,
+      state: cart.billing_address.province ?? undefined,
+      country: cart.billing_address.country?.name ?? undefined,
+
       process_currency: session.data.currency as string,
       secret_key: "68cf1608-76e7-477a-a9aa-cb8b85d5a450",
       payment: session.data.payment as string,
-    })
+      payment_gateway_id: 40
+    };
+
+    postRedirect("https://stagingxpay.info/index.php?route=checkout/billing", data);
 
     setSubmitting(false)
   }

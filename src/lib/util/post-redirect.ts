@@ -1,6 +1,6 @@
 export default function postRedirect(
   url: string,
-  data: Record<string, string | number | null> = {}
+  data: Record<string, string | number | null | undefined> = {}
 ) {
   // Create a virtual form
   const form = document.createElement("form")
@@ -10,7 +10,7 @@ export default function postRedirect(
 
   // Add form fields for each data property
   for (const key in data) {
-    if (data.hasOwnProperty(key) && data[key] !== null) {
+    if (data.hasOwnProperty(key) && data[key] !== null && data[key] !== undefined) {
       const input = document.createElement("input")
       input.type = "hidden"
       input.name = key
