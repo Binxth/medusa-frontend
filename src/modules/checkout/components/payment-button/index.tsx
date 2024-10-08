@@ -9,6 +9,7 @@ import { placeOrder } from "@modules/checkout/actions"
 import React, { useState } from "react"
 import ErrorMessage from "../error-message"
 import Spinner from "@modules/common/icons/spinner"
+import postRedirect from "@lib/util/post-redirect"
 
 type PaymentButtonProps = {
   cart: Omit<Cart, "refundable_amount" | "refunded_total">
@@ -53,6 +54,14 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
     case "paypal":
       return (
         <PayPalPaymentButton
+          notReady={notReady}
+          cart={cart}
+          data-testid={dataTestId}
+        />
+      )
+    case "webx-pay":
+      return (
+        <WebXPayButton
           notReady={notReady}
           cart={cart}
           data-testid={dataTestId}
@@ -247,6 +256,57 @@ const PayPalPaymentButton = ({
       </>
     )
   }
+}
+
+const WebXPayButton = ({
+  cart,
+  notReady,
+  "data-testid": dataTestId,
+}: {
+  cart: Omit<Cart, "refundable_amount" | "refunded_total">
+  notReady: boolean
+  "data-testid"?: string
+}) => {
+  const [submitting, setSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const session = cart.payment_session as PaymentSession
+
+
+  const handlePayment = async () => {
+    setSubmitting(true)
+
+    postRedirect("https://stagingxpay.info/index.php?route=checkout/billing", {
+      first_name: cart.billing_address.first_name,
+      last_name: cart.billing_address.last_name,
+      email: cart.email,
+      contact_number: cart.billing_address.phone,
+      address_line_one: cart.billing_address.address_1,
+      process_currency: session.data.currency as string,
+      secret_key: "68cf1608-76e7-477a-a9aa-cb8b85d5a450",
+      payment: session.data.payment as string,
+    })
+
+    setSubmitting(false)
+  }
+
+  return (
+    <>
+      <Button
+        disabled={notReady}
+        onClick={handlePayment}
+        size="large"
+        isLoading={submitting}
+        data-testid={dataTestId}
+      >
+        Place order
+      </Button>
+      <ErrorMessage
+        error={errorMessage}
+        data-testid="stripe-payment-error-message"
+      />
+    </>
+  )
 }
 
 const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {

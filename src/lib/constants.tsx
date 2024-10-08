@@ -30,6 +30,10 @@ export const paymentInfoMap: Record<
     title: "Test payment",
     icon: <CreditCard />,
   },
+  "webx-pay": {
+    title: "WebXPay",
+    icon: <CreditCard />
+  }
   // Add more payment providers here
 }
 
