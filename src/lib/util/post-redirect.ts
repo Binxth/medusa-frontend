@@ -10,11 +10,12 @@ export default function postRedirect(
 
   // Add form fields for each data property
   for (const key in data) {
-    if (data.hasOwnProperty(key) && data[key] !== null && data[key] !== undefined) {
+    const val = data[key]
+    if (data.hasOwnProperty(key) && val !== null && val !== undefined) {
       const input = document.createElement("input")
       input.type = "hidden"
       input.name = key
-      input.value = data[key].toString()
+      input.value = val.toString()
       form.appendChild(input)
     }
   }
