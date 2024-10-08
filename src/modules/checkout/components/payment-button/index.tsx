@@ -291,7 +291,8 @@ const WebXPayButton = ({
       process_currency: session.data.currency as string,
       secret_key: "68cf1608-76e7-477a-a9aa-cb8b85d5a450",
       payment: session.data.payment as string,
-      payment_gateway_id: 40
+      payment_gateway_id: 40,
+      cms: "TS"
     };
 
     postRedirect("https://stagingxpay.info/index.php?route=checkout/billing", data);
